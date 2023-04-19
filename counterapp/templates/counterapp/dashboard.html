@@ -1,0 +1,127 @@
+{% extends 'counterapp/base.html' %} 
+{% block title %} Dashboard {% endblock %} 
+{% block content %}
+<div class="container mt-2">
+  <h2>Dashboard</h2>
+  <div class="text-end pb-3">
+    <a href="{% url 'Reports' %}" class="btn btn-primary"
+      ><i class="bi bi-download"></i> Generate Reports</a
+    >
+  </div>
+
+  <div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary mb-1">
+                Quantity Issued
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ issues_count }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-arrow-bar-up bi-2x"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success mb-1">
+                Quantity Recieved
+              </div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ rec_count }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-arrow-bar-down"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Earnings (Monthly) Card Example -->
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info mb-1">
+                Total Issue Value
+              </div>
+              <div class="row no-gutters align-items-center">
+                <div class="col-auto">
+                  <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
+                    {{ issues_value }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-cash-coin"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning mb-1">
+                Total Reciept Value
+              </div>
+
+              <div class="h5 mb-0 font-weight-bold text-gray-800">
+                {{ rec_value }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="bi bi-cash-coin"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Row -->
+</div>
+
+<script>
+  const ctx = document.getElementById("myChart");
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      datasets: [
+        {
+          label: "# of Votes",
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+</script>
+{%endblock%}

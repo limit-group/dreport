@@ -1,0 +1,114 @@
+{% extends 'counterapp/base.html' %} {% block title %} Reports {% endblock %}
+{%block content %}
+<div class="container">
+  <div class="pb-1">
+    <h2>Reports</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="">
+        <form action="" method="post">
+          <div class="row form-group">
+            <div class="col">
+              <p><b>Requisition/Issues</b></p>
+            </div>
+            <div class="col">
+              <select name="month" id="" class="form-control">
+                <option value="current">Current month</option>
+                {% for m in months %}
+                <option value="current">{{ m }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="text-end">
+                <a class="btn btn-primary" onclick="alert('Reports not ready!')"
+                  ><i class="bi bi-filetype-pdf"></i></a
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+        <br />
+        <div class="">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Voucher #</th>
+                <th >Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in req_and_issues %}
+              <tr>
+                <td>{{ r.voucher_no }}</td>
+                <td>
+                  <a
+                    href="{% url 'Issue Detail' voucher_no=r.voucher_no %}"
+                    class="btn btn-primary"
+                  >
+                  See Voucher Items</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="">
+        <form action="" method="post">
+          <div class="row form-group">
+            <div class="col">
+              <p><b>Receipts</b></p>
+            </div>
+            <div class="col">
+              <select name="month" id="" class="form-control">
+                <option value="current">Current month</option>
+                {% for m in months %}
+                <option value="current">{{ m }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="text-end">
+                <a class="btn btn-primary" onclick="alert('Reports not ready!')"
+                  ><i class="bi bi-filetype-pdf"></i></a
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+        <br />
+        <div class="">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Voucher #</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in receipts %}
+              <tr>
+                <td>{{ r.voucher_no }}</td>
+                <td>
+                  <a
+                    href="{% url 'Reciept Detail' voucher_no=r.voucher_no %}"
+                    class="btn btn-primary"
+                  >
+                    See Voucher Items</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

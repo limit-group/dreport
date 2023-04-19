@@ -1,0 +1,187 @@
+{% extends 'counterapp/base.html' %} {% block title %} Add Req/Issue
+{%endblock%} {% block content %}
+
+<div class="container">
+  <div class="text-center">
+    <h2>Counter Requisition and Issue Voucher</h2>
+  </div>
+  {% if msg %}
+  <div class="alert alert-danger text-center">
+    <span class="title">{{ msg }} </span>
+  </div>
+  {% endif %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Code No.</th>
+        <th>Item Description</th>
+        <th>Unit of Issue</th>
+        <th>Quantity Required</th>
+        <th>Quantity Issued</th>
+        <th>Value</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div class="pb-2">
+    <form action="" id="counter-form">
+      <div class="row g-3">
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Code No"
+            aria-label="Code No"
+            name="code_no"
+          />
+        </div>
+        <div class="col">
+          <textarea
+            name="description"
+            id=""
+            class="form-control"
+            placeholder="Description"
+          ></textarea>
+        </div>
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Unit"
+            aria-label="Unit"
+            name="units"
+          />
+        </div>
+        <div class="col">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Qty Required"
+            aria-label="QuantityRequired"
+            name="quantity_required"
+          />
+        </div>
+        <div class="col">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Qty Issued"
+            aria-label="QuantityIssued"
+            name="quantity_issued"
+          />
+        </div>
+        <div class="col">
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Value"
+            aria-label="Value"
+            name="value"
+          />
+        </div>
+
+        <div class="col">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Remarks"
+            aria-label="Remarks"
+            name="remarks"
+          />
+        </div>
+        <div class="col">
+          <button id="add-item" class="btn btn-primary">
+            <i class="bi bi-file-plus"></i> Add Item
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <form action="" method="POST">
+    {% csrf_token %}
+
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+        <label for="voucher_no" class="form-label">Voucher No</label>
+        <input
+          type="number"
+          name="voucher_no"
+          id="voucher_no"
+          class="form-control"
+        />
+      </div>
+    </div>
+
+    <br />
+    <input name="items" type="text" required hidden />
+    <div class="text-center d-grid">
+      <button type="submit" class="btn btn-primary">
+        Save Requisition/Issue
+      </button>
+    </div>
+  </form>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const item = document.getElementById("add-item");
+    const tableBody = document.querySelector("table tbody");
+    let items = [];
+    item.addEventListener("click", function (event) {
+      event.preventDefault();
+
+      const code_no = document.querySelector('input[name="code_no"]').value;
+      const description = document.querySelector(
+        'textarea[name="description"]'
+      ).value;
+      const units = document.querySelector('input[name="units"]').value;
+      const quantity_required = document.querySelector(
+        'input[name="quantity_required"]'
+      ).value;
+      const quantity_issued = document.querySelector(
+        'input[name="quantity_issued"]'
+      ).value;
+      const value = document.querySelector('input[name="value"]').value;
+      const remarks = document.querySelector('input[name="remarks"]').value;
+
+      var item = {
+        code_no: code_no,
+        description: description,
+        units: units,
+        quantity_required: quantity_required,
+        quantity_issued: quantity_issued,
+        value: value,
+        remarks: remarks,
+      };
+
+      const row = `
+      <tr>
+        <td>${code_no}</td>
+        <td>${description}</td>
+        <td>${units}</td>
+        <td>${quantity_required}</td>
+        <td>${quantity_issued}</td>
+        <td>${value}</td>
+        <td>${remarks}</td>
+      </tr>
+    `;
+
+      tableBody.innerHTML += row;
+      items.push(item);
+      document.querySelector('input[name="items"]').value =
+        JSON.stringify(items);
+      console.log(items);
+
+      // Clear form inputs
+      document.querySelector('input[name="code_no"]').value = "";
+      document.querySelector('textarea[name="description"]').value = "";
+      document.querySelector('input[name="units"]').value = "";
+      document.querySelector('input[name="quantity_required"]').value = "";
+      document.querySelector('input[name="quantity_issued"]').value = "";
+      document.querySelector('input[name="value"]').value = "";
+      document.querySelector('input[name="remarks"]').value = "";
+    });
+  });
+</script>
+
+{%endblock%}
