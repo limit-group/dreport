@@ -10,10 +10,10 @@
 
 <div class="container">
   <div class="pb-1">
-    <h2>Requisitions and Issues</h2>
+    <h2>Issues</h2>
     <div class="text-end">
-      <a href="{% url 'Add Requisition/Issue' %}" class="btn btn-primary"
-        >Add Requisition/Issue</a
+      <a href="{% url 'Add Issue' %}" class="btn btn-primary"
+        >Add Issue</a
       >
     </div>
   </div>
@@ -22,22 +22,18 @@
       <tr>
         <th scope="col">Code No.</th>
         <th scope="col">Item Description</th>
-        <th scope="col">Unit of Issue</th>
-        <th scope="col">Qty Required</th>
+        <th scope="col">Unit(s)</th>
         <th scope="col">Qty Issued</th>
-        <th scope="col">Value</th>
         <th scope="col">Date.</th>
       </tr>
     </thead>
     <tbody>
-      {% for rec in req_and_issues %}
+      {% for rec in issues %}
       <tr>
         <td>{{ rec.code_no }}</td>
         <td>{{ rec.description }}</td>
         <td>{{ rec.units }}</td>
-        <td>{{ rec.quantity_required }}</td>
         <td>{{ rec.quantity_issued }}</td>
-        <td>{{ rec.value }}</td>
         <td>{{ rec.created_at }}</td>
       </tr>
       {% endfor %}

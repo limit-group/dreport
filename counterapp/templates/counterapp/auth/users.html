@@ -1,0 +1,33 @@
+{% extends 'counterapp/base.html' %} {% block content %}
+<div class="container">
+    <div class="pb-1">
+      <h2>User Management</h2>
+      <div class="text-end">
+        <a href="{% url 'Add User' %}" class="btn btn-primary"
+          >Create New User</a
+        >
+      </div>
+    </div>
+    <table class="table table-bordered" id="reqs">
+      <thead>
+        <tr>
+          <th scope="col">Username.</th>
+          <th scope="col">Email</th>
+          <th scope="col">Role</th>
+          <th scope="col">Created Date.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in users %}
+        <tr>
+          <td>{{ rec.name }}</td>
+          <td>{{ rec.email }}</td>
+          <td>{{ rec.role }}</td>
+          <td>{{ rec.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{%endblock%}

@@ -3,7 +3,7 @@
 
 <div class="container">
   <div class="text-center">
-    <h2>Counter Requisition and Issue Voucher</h2>
+    <h2>Requisition Voucher</h2>
   </div>
   {% if msg %}
   <div class="alert alert-danger text-center">
@@ -14,12 +14,9 @@
     <thead>
       <tr>
         <th>Code No.</th>
-        <th>Item Description</th>
-        <th>Unit of Issue</th>
+        <th>Unit(s)</th>
+        <th>Description</th>
         <th>Quantity Required</th>
-        <th>Quantity Issued</th>
-        <th>Value</th>
-        <th>Remarks</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -37,14 +34,6 @@
           />
         </div>
         <div class="col">
-          <textarea
-            name="description"
-            id=""
-            class="form-control"
-            placeholder="Description"
-          ></textarea>
-        </div>
-        <div class="col">
           <input
             type="text"
             class="form-control"
@@ -54,40 +43,21 @@
           />
         </div>
         <div class="col">
+          <textarea
+            name="description"
+            id=""
+            class="form-control"
+            placeholder="Description"
+          ></textarea>
+        </div>
+
+        <div class="col">
           <input
             type="number"
             class="form-control"
             placeholder="Qty Required"
             aria-label="QuantityRequired"
             name="quantity_required"
-          />
-        </div>
-        <div class="col">
-          <input
-            type="number"
-            class="form-control"
-            placeholder="Qty Issued"
-            aria-label="QuantityIssued"
-            name="quantity_issued"
-          />
-        </div>
-        <div class="col">
-          <input
-            type="number"
-            class="form-control"
-            placeholder="Value"
-            aria-label="Value"
-            name="value"
-          />
-        </div>
-
-        <div class="col">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Remarks"
-            aria-label="Remarks"
-            name="remarks"
           />
         </div>
         <div class="col">
@@ -116,9 +86,7 @@
     <br />
     <input name="items" type="text" required hidden />
     <div class="text-center d-grid">
-      <button type="submit" class="btn btn-primary">
-        Save Requisition/Issue
-      </button>
+      <button type="submit" class="btn btn-primary">Save Requisition</button>
     </div>
   </form>
 </div>
@@ -138,20 +106,12 @@
       const quantity_required = document.querySelector(
         'input[name="quantity_required"]'
       ).value;
-      const quantity_issued = document.querySelector(
-        'input[name="quantity_issued"]'
-      ).value;
-      const value = document.querySelector('input[name="value"]').value;
-      const remarks = document.querySelector('input[name="remarks"]').value;
 
       var item = {
         code_no: code_no,
         description: description,
         units: units,
         quantity_required: quantity_required,
-        quantity_issued: quantity_issued,
-        value: value,
-        remarks: remarks,
       };
 
       const row = `
@@ -160,9 +120,6 @@
         <td>${description}</td>
         <td>${units}</td>
         <td>${quantity_required}</td>
-        <td>${quantity_issued}</td>
-        <td>${value}</td>
-        <td>${remarks}</td>
       </tr>
     `;
 
@@ -177,9 +134,6 @@
       document.querySelector('textarea[name="description"]').value = "";
       document.querySelector('input[name="units"]').value = "";
       document.querySelector('input[name="quantity_required"]').value = "";
-      document.querySelector('input[name="quantity_issued"]').value = "";
-      document.querySelector('input[name="value"]').value = "";
-      document.querySelector('input[name="remarks"]').value = "";
     });
   });
 </script>

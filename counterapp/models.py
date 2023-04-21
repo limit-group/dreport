@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password
 
 
 class Receipt(models.Model):
@@ -23,39 +24,76 @@ class Receipt(models.Model):
         return rec.receipt_items.all()
 
 
-class RequisitionAndIssue(models.Model):
+class Requisition(models.Model):
+    voucher_no = models.IntegerField()
+    order_no = models.CharField(max_length=255, null=True)
+    invoice_no = models.CharField(max_length=255, null=True)
+    requisitioning_officer = models.CharField(max_length=255, null=True)
+    requisitioning_officer_designation = models.CharField(max_length=255, null=True)
+    approved = models.BooleanField(default=False)
+    approved_by = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def get_requisitions():
+        return Requisition.objects.all()
+
+    def get_requisitions_by_voucher_no(voucher_no):
+        issue = Requisition.objects.filter(voucher_no=voucher_no).first()
+        return issue.requisition_items.all()
+
+
+class Issue(models.Model):
     voucher_no = models.IntegerField()
     order_no = models.CharField(max_length=255, null=True)
     invoice_no = models.CharField(max_length=255, null=True)
     issuing_officer = models.CharField(max_length=255, null=True)
     issuing_officer_designation = models.CharField(max_length=255, null=True)
-    requisitioning_officer = models.CharField(max_length=255, null=True)
-    requisitioning_officer_designation = models.CharField(max_length=255, null=True)
+    approved = models.BooleanField(default=False)
+    approved_by = models.CharField(max_length=255, null=True)
     receiving_officer = models.CharField(max_length=255, null=True)
     receiving_officer_designation = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def get_req_and_issues():
-        return RequisitionAndIssue.objects.all()
+    def get_issues():
+        return Issue.objects.all()
 
     def get_issues_by_voucher_no(voucher_no):
-        issue = RequisitionAndIssue.objects.filter(voucher_no=voucher_no).first()
-        return issue.req_and_issue_items.all()
+        issue = Issue.objects.filter(voucher_no=voucher_no).first()
+        return issue.issue_items.all()
 
 
-class RequisitionAndIssueItem(models.Model):
+class RequisitionItem(models.Model):
     receipt = models.ForeignKey(
-        RequisitionAndIssue,
+        Requisition,
         on_delete=models.CASCADE,
-        related_name="req_and_issue_items",
+        related_name="requisition_items",
     )
     code_no = models.CharField(max_length=255)
     description = models.TextField()
-    units = models.CharField(max_length=255)
+    items = models.CharField(max_length=255)
     quantity_required = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def get_requisition_items():
+        return RequisitionItem.objects.all()
+
+
+class IssueItem(models.Model):
+    receipt = models.ForeignKey(
+        Issue,
+        on_delete=models.CASCADE,
+        related_name="issue_items",
+    )
+    code_no = models.CharField(max_length=255)
+    description = models.TextField()
+    items = models.CharField(max_length=255)
     quantity_issued = models.IntegerField()
-    value = models.CharField(max_length=255)
     remarks = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -63,8 +101,8 @@ class RequisitionAndIssueItem(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def get_req_and_issue_items():
-        return RequisitionAndIssueItem.objects.all()
+    def get_issue_items():
+        return IssueItem.objects.all()
 
 
 class ReceiptItem(models.Model):
@@ -108,3 +146,28 @@ class User(models.Model):
 
     def get_user_by_email(email):
         return User.objects.filter(email=email).first()
+
+    def get_all_users():
+        return User.objects.all()
+
+    def create_user(email, username, role, password):
+        return User.objects.create(
+            name=username, email=email, password=make_password(password)
+        )
+
+
+class Item(models.Model):
+    name = models.CharField(max_length=255)
+    count = models.IntegerField(default=0)
+    description = models.CharField(max_length=1000, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def create_item(name):
+        return Item.objects.create(name=name)
+
+    def get_all_items():
+        return Item.objects.all()

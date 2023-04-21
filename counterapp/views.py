@@ -15,10 +15,79 @@ from reportlab.platypus import Table, SimpleDocTemplate, TableStyle
 from .models import (
     Receipt,
     ReceiptItem,
-    RequisitionAndIssue,
-    RequisitionAndIssueItem,
+    Requisition,
+    RequisitionItem,
     User,
+    ReceiptItem,
+    Issue,
+    IssueItem,
+    Item,
 )
+
+
+def items(request):
+    context = {}
+    if request.method == "GET":
+        items = Item.get_all_items()
+        context["items"] = items
+        return render(request, "counterapp/items.html", context)
+
+
+def add_item(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, "counterapp/add_item.html", context)
+
+    if request.method == "POST":
+        name = request.POST["name"]
+        description = request.POST["description"]
+        try:
+            Item.create_item(name)
+        except:
+            context["msg"] = "failed to create an item"
+            return render(request, "counterapp/add_item.html", context)
+
+        items = Item.get_all_items()
+        context["items"] = items
+        return render(request, "counterapp/items.html", context)
+
+
+def add_user(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, "counterapp/auth/signup.html", context)
+
+    if request.method == "POST":
+        email = request.POST["email"]
+        username = request.POST["username"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirm-password"]
+        role = request.POST["role"]
+
+        if password != confirm_password:
+            context["msg"] = "Passwords must match."
+            return render(request, "counterapp/auth/signup.html", context)
+
+        user = User.get_user_by_email(email)
+        if user:
+            context["msg"] = "This user is already registered"
+            return render(request, "counterapp/auth/signup.html", context)
+        try:
+            User.create_user(email, username, role, password)
+        except:
+            context["msg"] = "Error creating a new user"
+            return render(request, "counterapp/auth/signup.html", context)
+
+        context["users"] = User.get_all_users()
+        return render(request, "counterapp/auth/users.html", context)
+
+
+def users(request):
+    context = {}
+    if request.method == "GET":
+        users = User.get_all_users()
+        context["users"] = users
+        return render(request, "counterapp/auth/users.html", context)
 
 
 def login(request):
@@ -62,7 +131,6 @@ def add_reciept(request):
                     description=item["description"],
                     quantity=item["quantity"],
                     units=item["units"],
-                    value=item["value"],
                     remarks=item["remarks"],
                     receipt=receipt,
                 )
@@ -76,39 +144,64 @@ def add_reciept(request):
         return render(request, "counterapp/receipts.html", context)
 
 
-def add_req_or_issue(request):
+def add_issue(request):
     context = {}
     if request.method == "GET":
-        return render(request, "counterapp/add_req_or_issue.html", context)
+        return render(request, "counterapp/add_issue.html", context)
 
     if request.method == "POST":
         items = request.POST["items"]
         if items is None:
-            context["msg"] = "Add entries of requisition or issues"
-            return render(request, "counterapp/add_req_or_issue.html", context)
+            context["msg"] = "Add entries of issues"
+            return render(request, "counterapp/add_issue.html", context)
         try:
-            receipt = RequisitionAndIssue.objects.create(
-                voucher_no=request.POST["voucher_no"]
-            )
+            receipt = Issue.objects.create(voucher_no=request.POST["voucher_no"])
             for item in json.loads(items):
-                req_item = RequisitionAndIssueItem(
+                req_item = IssueItem(
                     code_no=item["code_no"],
                     description=item["description"],
                     units=item["units"],
-                    quantity_required=item["quantity_required"],
                     quantity_issued=item["quantity_issued"],
-                    value=item["value"],
-                    remarks=item["remarks"],
                     receipt=receipt,
                 )
                 req_item.save()
         except:
             context["msg"] = "Error adding requisition or issues"
-            return render(request, "counterapp/add_req_or_issue.html", context)
+            return render(request, "counterapp/add_issue.html", context)
 
-        req_and_issues = RequisitionAndIssueItem.get_req_and_issue_items()
-        context["req_and_issues"] = req_and_issues
-        return render(request, "counterapp/req_and_issues.html", context)
+        issues = IssueItem.get_issue_items()
+        context["issues"] = issues
+        return render(request, "counterapp/issues.html", context)
+
+
+def add_requisition(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, "counterapp/add_requisition.html", context)
+
+    if request.method == "POST":
+        items = request.POST["items"]
+        if items is None:
+            context["msg"] = "Add entries of a requisition"
+            return render(request, "counterapp/add_requisition.html", context)
+        try:
+            receipt = Requisition.objects.create(voucher_no=request.POST["voucher_no"])
+            for item in json.loads(items):
+                req_item = RequisitionItem(
+                    code_no=item["code_no"],
+                    description=item["description"],
+                    items=item["units"],
+                    quantity_required=item["quantity_required"],
+                    receipt=receipt,
+                )
+                req_item.save()
+        except:
+            context["msg"] = "Error adding requisition items"
+            return render(request, "counterapp/add_requisition.html", context)
+
+        requisitions = RequisitionItem.get_requisition_items()
+        context["requisitions"] = requisitions
+        return render(request, "counterapp/requisitions.html", context)
 
 
 def reciepts(request):
@@ -126,25 +219,41 @@ def reciept_detail(request, voucher_no):
     return render(request, "counterapp/receipts.html", context)
 
 
-def req_and_issues(request):
+def requisitions(request):
     context = {}
-    req_and_issues = RequisitionAndIssueItem.get_req_and_issue_items()
-    context["req_and_issues"] = req_and_issues
+    requisitions = RequisitionItem.get_requisition_items()
+    context["requisitions"] = requisitions
 
-    return render(request, "counterapp/req_and_issues.html", context)
+    return render(request, "counterapp/requisitions.html", context)
 
 
-def req_and_issues_detail(request, voucher_no):
+def issues(request):
     context = {}
-    req_and_issues = RequisitionAndIssue.get_issues_by_voucher_no(voucher_no)
-    context["req_and_issues"] = req_and_issues
+    issues = IssueItem.get_issue_items()
+    context["issues"] = issues
 
-    return render(request, "counterapp/req_and_issues.html", context)
+    return render(request, "counterapp/issues.html", context)
+
+
+def requisition_detail(request, voucher_no):
+    context = {}
+    requisitions = Requisition.get_requisitions_by_voucher_no(voucher_no)
+    context["requisitions"] = requisitions
+
+    return render(request, "counterapp/requisitions.html", context)
+
+
+def issue_detail(request, voucher_no):
+    context = {}
+    issues = Issue.get_issues_by_voucher_no(voucher_no)
+    context["issues"] = issues
+
+    return render(request, "counterapp/issues.html", context)
 
 
 def dashboard(request):
     context = {}
-    issues = RequisitionAndIssueItem.get_req_and_issue_items().values()
+    issues = IssueItem.get_issue_items().values()
     recs = ReceiptItem.get_receipt_items().values()
     recp_count = 0
     recp_value = 0
@@ -185,9 +294,11 @@ def reports(request):
     context["months"] = months
     if request.method == "GET":
         reciepts = Receipt.get_reciepts()
-        req_and_issues = RequisitionAndIssue.get_req_and_issues()
+        issues = Issue.get_issues()
+        requisitions = Requisition.get_requisitions()
         context["receipts"] = reciepts
-        context["req_and_issues"] = req_and_issues
+        context["issues"] = issues
+        context["requisitions"] = requisitions
         return render(request, "counterapp/reports.html", context)
 
 

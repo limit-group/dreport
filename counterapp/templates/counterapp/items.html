@@ -1,0 +1,31 @@
+{% extends 'counterapp/base.html' %} {% block content %}
+<div class="container">
+    <div class="pb-1">
+      <h2>Store Items</h2>
+      <div class="text-end">
+        <a href="{% url 'Add Item' %}" class="btn btn-primary"
+          >Add Item</a
+        >
+      </div>
+    </div>
+    <table class="table table-bordered" id="reqs">
+      <thead>
+        <tr>
+          <th scope="col">Item Name.</th>
+          <th scope="col">Count In Stock</th>
+          <th scope="col">Created Date.</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in items %}
+        <tr>
+          <td>{{ rec.name }}</td>
+          <td>{{ rec.count }}</td>
+          <td>{{ rec.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{%endblock%}
