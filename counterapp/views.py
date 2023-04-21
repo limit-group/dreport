@@ -1,4 +1,5 @@
 import json
+import re
 from io import BytesIO
 from datetime import datetime
 from django.contrib.auth.hashers import make_password, check_password
@@ -31,11 +32,13 @@ def dashboard(request):
     receipt_count = Receipt.objects.count()
     requisition_count = Requisition.objects.count()
     item_count = Item.objects.count()
+    user_count = User.objects.count()
 
     context["issue_count"] = issue_count
     context["receipt_count"] = receipt_count
     context["requisition_count"] = requisition_count
     context["item_count"] = item_count
+    context["user_count"] = user_count
     return render(request, "counterapp/dashboard.html", context)
 
 
@@ -66,6 +69,46 @@ def add_item(request):
         return render(request, "counterapp/items.html", context)
 
 
+def item_detail(request, item_id):
+    context = {}
+
+    try:
+        item = Item.get_item_by_id(item_id)
+    except Item.DoesNotExist:
+        context["msg"] = "Item not found!"
+        return render(request, "counterapp/items.html", context)
+
+    if request.method == "GET":
+        context["item"] = item
+        return render(request, "counterapp/edit_item.html", context)
+
+    if request.method == "POST":
+        name = request.POST["name"]
+        description = request.POST["description"]
+        count = request.POST["count"]
+        try:
+            Item.update_item(item, name, description, count)
+        except:
+            context["msg"] = "Error updating item!"
+            return render(request, "counterapp/items.html", context)
+
+        return render(request, "counterapp/items.html", context)
+
+
+def delete_item(request, item_id):
+    context = {}
+    if request.method == "POST":
+        try:
+            Item.delete_item(item_id)
+        except:
+            context["msg"] = "failed to delete item"
+            return render(request, "counterapp/items.html", context)
+
+        Item.get_all_items()
+        context["items"] = items
+        return render(request, "counterapp/items.html", context)
+
+
 def users(request):
     context = {}
     if request.session["user_role"] != "Admin" and not None:
@@ -79,7 +122,7 @@ def users(request):
 
 def add_user(request):
     context = {}
-    if request.session["user_role"] != "Admin" and not None:
+    if request.session["user_role"] != "Admin" and request.session is not None:
         return render(request, "counterapp/dashboard.html", context)
 
     if request.method == "GET":
@@ -215,26 +258,44 @@ def reciept_detail(request, voucher_no):
 def add_reciept(request):
     context = {}
     if request.method == "GET":
+        items = Item.get_all_items()
+        context["items"] = items
         return render(request, "counterapp/add_receipt.html", context)
 
     if request.method == "POST":
-        items = request.POST["items"]
-        if items is None:
+        entries = request.POST["entries"]
+        if entries is None:
             context["msg"] = "Add entries to the reciepts"
             return render(request, "counterapp/add_receipt.html", context)
         try:
             receipt = Receipt.objects.create(voucher_no=request.POST["voucher_no"])
-            for item in json.loads(items):
+            reciept_items = []
+            for entry in json.loads(entries):
+                item_id = (
+                    int(re.match(r"\d+", entry["item"]).group())
+                    if re.match(r"\d+", entry["item"])
+                    else None
+                )
                 reciept_item = ReceiptItem(
-                    code_no=item["code_no"],
-                    description=item["description"],
-                    quantity=item["quantity"],
-                    units=item["units"],
-                    remarks=item["remarks"],
+                    code_no=entry["code_no"],
+                    description=entry["description"],
+                    quantity=entry["quantity"],
+                    item_id=item_id,
+                    remarks=entry["remarks"],
                     receipt=receipt,
                 )
-                reciept_item.save()
-        except:
+                reciept_items.append(reciept_item)
+
+                item = Item.get_item_by_id(item_id)
+                item.count += int(entry["quantity"])
+                item.save()
+
+            ReceiptItem.objects.bulk_create(reciept_items)
+
+        except Exception as e:
+            print(e)
+            items = Item.get_all_items()
+            context["items"] = items
             context["msg"] = "Error saving reciept!"
             return render(request, "counterapp/add_receipt.html", context)
 
@@ -262,26 +323,42 @@ def issue_detail(request, voucher_no):
 def add_issue(request):
     context = {}
     if request.method == "GET":
+        items = Item.get_all_items()
+        context["items"] = items
         return render(request, "counterapp/add_issue.html", context)
 
     if request.method == "POST":
-        items = request.POST["items"]
-        if items is None:
+        entries = request.POST["entries"]
+        if not entries:
             context["msg"] = "Add entries of issues"
             return render(request, "counterapp/add_issue.html", context)
         try:
-            receipt = Issue.objects.create(voucher_no=request.POST["voucher_no"])
-            for item in json.loads(items):
-                req_item = IssueItem(
-                    code_no=item["code_no"],
-                    description=item["description"],
-                    units=item["units"],
-                    quantity_issued=item["quantity_issued"],
-                    receipt=receipt,
+            issue = Issue.objects.create(voucher_no=request.POST["voucher_no"])
+            issue_items = []
+            for entry in json.loads(entries):
+                item_id = (
+                    int(re.match(r"\d+", entry["item"]).group())
+                    if re.match(r"\d+", entry["item"])
+                    else None
                 )
-                req_item.save()
-        except:
-            context["msg"] = "Error adding requisition or issues"
+                issue_item = IssueItem(
+                    code_no=entry["code_no"],
+                    description=entry["description"],
+                    item_id=item_id,
+                    quantity_issued=entry["quantity_issued"],
+                    issue=issue,
+                )
+                issue_items.append(issue_item)
+                item = Item.get_item_by_id(item_id)
+                if item.count > 0:
+                    item.count -= entry["quantity_issued"]
+                    item.save()
+
+            IssueItem.objects.bulk_create(issue_items)
+        except Exception as e:
+            items = Item.get_all_items()
+            context["items"] = items
+            context["msg"] = "Error adding issue entry"
             return render(request, "counterapp/add_issue.html", context)
 
         issues = IssueItem.get_issue_items()
@@ -308,26 +385,45 @@ def requisition_detail(request, voucher_no):
 def add_requisition(request):
     context = {}
     if request.method == "GET":
+        items = Item.get_all_items()
+        context["items"] = items
         return render(request, "counterapp/add_requisition.html", context)
 
     if request.method == "POST":
-        items = request.POST["items"]
-        if items is None:
+        entries = request.POST["entries"]
+        if entries is None:
             context["msg"] = "Add entries of a requisition"
             return render(request, "counterapp/add_requisition.html", context)
         try:
-            receipt = Requisition.objects.create(voucher_no=request.POST["voucher_no"])
-            for item in json.loads(items):
-                req_item = RequisitionItem(
-                    code_no=item["code_no"],
-                    description=item["description"],
-                    items=item["units"],
-                    quantity_required=item["quantity_required"],
-                    receipt=receipt,
+            requisition = Requisition.objects.create(
+                voucher_no=request.POST["voucher_no"]
+            )
+            requisition_items = []
+            for entry in json.loads(entries):
+                item_id = (
+                    int(re.match(r"\d+", entry["item"]).group())
+                    if re.match(r"\d+", entry["item"])
+                    else None
                 )
-                req_item.save()
-        except:
-            context["msg"] = "Error adding requisition items"
+                req_item = RequisitionItem(
+                    code_no=entry["code_no"],
+                    description=entry["description"],
+                    item_id=item_id,
+                    quantity_required=entry["quantity_required"],
+                    requisition=requisition,
+                )
+                requisition_items.append(req_item)
+                item = Item.get_item_by_id(item_id)
+                item.count += 1
+                item.save()
+
+            RequisitionItem.objects.bulk_create(requisition_items)
+
+        except Exception as e:
+            print(e)
+            items = Item.get_all_items()
+            context["items"] = items
+            context["msg"] = "Error adding requisition entries"
             return render(request, "counterapp/add_requisition.html", context)
 
         requisitions = RequisitionItem.get_requisition_items()

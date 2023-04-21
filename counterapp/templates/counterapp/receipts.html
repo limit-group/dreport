@@ -21,9 +21,9 @@
       <thead>
         <tr>
           <th scope="col">Code No.</th>
-          <th scope="col">Item Description</th>
-          <th scope="col">Unit</th>
-          <th scope="col">Quantity</th>
+          <th scope="col">Item</th>
+          <th scope="col">Description</th>
+          <th scope="col">Qty Recieved</th>
           <th scope="col">Date.</th>
         </tr>
       </thead>
@@ -31,8 +31,8 @@
         {% for rec in receipts %}
         <tr>
           <td>{{ rec.code_no }}</td>
+          <td>{{ rec.item.name }}</td>
           <td>{{ rec.description }}</td>
-          <td>{{ rec.units }}</td>
           <td>{{ rec.quantity }}</td>
           <td>{{ rec.created_at }}</td>
         </tr>

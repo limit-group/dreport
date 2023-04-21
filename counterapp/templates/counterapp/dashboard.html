@@ -6,6 +6,7 @@
   }
 </style>
 <div class="container mt-2">
+  {%if request.session %}
   <h2>Dashboard</h2>
   <div class="row">
     <!-- Earnings (Monthly) Card Example -->
@@ -116,7 +117,7 @@
                 </div>
 
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ rec_value }}
+                  {{ user_count }}
                 </div>
               </div>
               <div class="col-auto">
@@ -130,7 +131,11 @@
     {% endif %}
   </div>
 
-  <!-- Content Row -->
+  {% else %}
+
+  <p>Login Here </p>
+
+  {% endif %}
 </div>
 
 <script>

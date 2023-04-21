@@ -1,31 +1,43 @@
 {% extends 'counterapp/base.html' %} {% block content %}
 <div class="container">
-    <div class="pb-1">
-      <h2>Store Items</h2>
-      <div class="text-end">
-        <a href="{% url 'Add Item' %}" class="btn btn-primary"
-          >Add Item</a
-        >
-      </div>
+  <div class="pb-1">
+    <h2>Store Items</h2>
+    <div class="text-end">
+      <a href="{% url 'Add Item' %}" class="btn btn-primary">Add Item</a>
     </div>
-    <table class="table table-bordered" id="reqs">
-      <thead>
-        <tr>
-          <th scope="col">Item Name.</th>
-          <th scope="col">Count In Stock</th>
-          <th scope="col">Created Date.</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for rec in items %}
-        <tr>
-          <td>{{ rec.name }}</td>
-          <td>{{ rec.count }}</td>
-          <td>{{ rec.created_at }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
+  <table class="table table-bordered" id="reqs">
+    <thead>
+      <tr>
+        <th scope="col">Item Name.</th>
+        <th scope="col">Count In Stock</th>
+        <th scope="col">Created Date.</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in items %}
+      <tr>
+        <td>{{ rec.name }}</td>
+        <td>{{ rec.count }}</td>
+        <td>{{ rec.created_at }}</td>
+        <td>
+          <div class="d-flex justify-content-around">
+            <a href="{% url 'Edit Item' item_id=rec.id %}" class="btn btn-info"
+              ><i class="bi bi-pencil-square"></i
+            ></a>
+            <form action="{% url 'Delete Item' item_id=rec.id%}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 {%endblock%}

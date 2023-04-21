@@ -21,8 +21,8 @@
     <thead>
       <tr>
         <th scope="col">Code No.</th>
-        <th scope="col">Item Description</th>
-        <th scope="col">Unit(s)</th>
+        <th scope="col">Item</th>
+        <th scope="col">Description</th>
         <th scope="col">Qty Required</th>
         <th scope="col">Date.</th>
         <th scope="col">Action</th>
@@ -32,8 +32,8 @@
       {% for rec in requisitions %}
       <tr>
         <td>{{ rec.code_no }}</td>
+        <td>{{ rec.item.name }}</td>
         <td>{{ rec.description }}</td>
-        <td>{{ rec.items }}</td>
         <td>{{ rec.quantity_required }}</td>
         <td>{{ rec.created_at }}</td>
         <td>

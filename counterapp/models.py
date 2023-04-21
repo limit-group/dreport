@@ -2,6 +2,31 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 
 
+class Item(models.Model):
+    name = models.CharField(max_length=255)
+    count = models.IntegerField(default=0)
+    description = models.CharField(max_length=1000, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def create_item(name):
+        return Item.objects.create(name=name)
+
+    def get_all_items():
+        return Item.objects.all()
+
+    def get_item_by_id(id):
+        return Item.objects.filter(id=id).first()
+
+    def delete_item(id):
+        item = Item.get_item_by_id(id)
+        item.delete()
+        return
+
+
 class Receipt(models.Model):
     voucher_no = models.IntegerField()
     order_no = models.CharField(max_length=255, null=True)
@@ -65,14 +90,14 @@ class Issue(models.Model):
 
 
 class RequisitionItem(models.Model):
-    receipt = models.ForeignKey(
+    requisition = models.ForeignKey(
         Requisition,
         on_delete=models.CASCADE,
         related_name="requisition_items",
     )
     code_no = models.CharField(max_length=255)
     description = models.TextField()
-    items = models.CharField(max_length=255)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity_required = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -85,14 +110,14 @@ class RequisitionItem(models.Model):
 
 
 class IssueItem(models.Model):
-    receipt = models.ForeignKey(
+    issue = models.ForeignKey(
         Issue,
         on_delete=models.CASCADE,
         related_name="issue_items",
     )
     code_no = models.CharField(max_length=255)
     description = models.TextField()
-    items = models.CharField(max_length=255)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity_issued = models.IntegerField()
     remarks = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -113,7 +138,7 @@ class ReceiptItem(models.Model):
     )
     code_no = models.IntegerField()
     description = models.TextField()
-    units = models.CharField(max_length=255)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     value = models.CharField(max_length=255)
     remarks = models.TextField()
@@ -174,20 +199,3 @@ class User(models.Model):
         user = User.get_user_by_id(id)
         user.delete()
         return
-
-
-class Item(models.Model):
-    name = models.CharField(max_length=255)
-    count = models.IntegerField(default=0)
-    description = models.CharField(max_length=1000, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ["-created_at"]
-
-    def create_item(name):
-        return Item.objects.create(name=name)
-
-    def get_all_items():
-        return Item.objects.all()

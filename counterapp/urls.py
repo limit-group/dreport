@@ -19,7 +19,9 @@ from .views import (
     items,
     logout,
     user_detail,
-    delete_user
+    delete_user,
+    delete_item,
+    item_detail,
 )
 
 urlpatterns = [
@@ -29,6 +31,8 @@ urlpatterns = [
     path("add-issue/", add_issue, name="Add Issue"),
     path("add-item/", add_item, name="Add Item"),
     path("items/", items, name="Items"),
+    path("items/edit-item/<int:item_id>/", item_detail, name="Edit Item"),
+    path("items/delete-item/<int:item_id>/", delete_item, name="Delete Item"),
     path("issues/", issues, name="Issues"),
     path("issues/<int:voucher_no>/", issue_detail, name="Issue Detail"),
     path("receipts/", reciepts, name="Reciepts"),
