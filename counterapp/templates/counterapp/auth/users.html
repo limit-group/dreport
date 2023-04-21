@@ -1,33 +1,50 @@
 {% extends 'counterapp/base.html' %} {% block content %}
 <div class="container">
-    <div class="pb-1">
-      <h2>User Management</h2>
-      <div class="text-end">
-        <a href="{% url 'Add User' %}" class="btn btn-primary"
-          >Create New User</a
-        >
-      </div>
+  <div class="pb-1">
+    <h2>User Management</h2>
+    <div class="text-end">
+      <a href="{% url 'Add User' %}" class="btn btn-primary">Create New User</a>
     </div>
-    <table class="table table-bordered" id="reqs">
-      <thead>
-        <tr>
-          <th scope="col">Username.</th>
-          <th scope="col">Email</th>
-          <th scope="col">Role</th>
-          <th scope="col">Created Date.</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for rec in users %}
-        <tr>
-          <td>{{ rec.name }}</td>
-          <td>{{ rec.email }}</td>
-          <td>{{ rec.role }}</td>
-          <td>{{ rec.created_at }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
+  {% if msg %}
+  <div class="alert alert-danger">
+    <span class="title">{{ msg }} </span>
+  </div>
+  {% endif %}
+  <table class="table table-bordered" id="reqs">
+    <thead>
+      <tr>
+        <th scope="col">Username.</th>
+        <th scope="col">Email</th>
+        <th scope="col">Role</th>
+        <th scope="col">Created Date.</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in users %}
+      <tr>
+        <td>{{ rec.name }}</td>
+        <td>{{ rec.email }}</td>
+        <td>{{ rec.role }}</td>
+        <td>{{ rec.created_at }}</td>
+        <td>
+          <div class="d-flex justify-content-around">
+            <a href="{% url 'Edit User' user_id=rec.id %}" class="btn btn-info"
+              ><i class="bi bi-pencil-square"></i
+            ></a>
+            <form action="{% url 'Delete User' user_id=rec.id %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 {%endblock%}

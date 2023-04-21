@@ -140,6 +140,7 @@ class User(models.Model):
             ("recieving", "RecievingOfficer"),
             ("requisitioning", "RequisitioningOfficer"),
         ),
+        null=False,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -152,8 +153,27 @@ class User(models.Model):
 
     def create_user(email, username, role, password):
         return User.objects.create(
-            name=username, email=email, password=make_password(password)
+            name=username, email=email, role=role, password=make_password(password)
         )
+
+    def get_user_by_id(id):
+        return User.objects.filter(id=id).first()
+
+    def update_user(user, username, email, password, role):
+        user.name = username
+        user.email = email
+        if password:
+            user.password = make_password(password)
+
+        user.role = role
+
+        user.save()
+        return
+
+    def delete_user(id):
+        user = User.get_user_by_id(id)
+        user.delete()
+        return
 
 
 class Item(models.Model):

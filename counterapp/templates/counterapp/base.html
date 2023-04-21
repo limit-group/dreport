@@ -83,28 +83,24 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            {% if  request.session.user_id %}
             <li class="nav-item">
-              <a class="nav-link active text-white" href="{% url 'Items' %}"
-                >Items</a
+              <a class="nav-link active text-white" href="{% url 'Dashboard' %}"
+                >Dashboard</a
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link active text-white" href="{% url 'Reciepts' %}"
-                >Reciepts</a
+              <a class="btn btn-outline-white" href="{% url 'Logout' %}"
+                >Logout</a
               >
             </li>
+            {% else %}
             <li class="nav-item">
-              <a
-                class="nav-link active text-white"
-                href="{% url 'Requisitions' %}"
-                >Requisitions</a
+              <a class="btn btn-outline-white" href="{% url 'Login' %}"
+                >Login</a
               >
             </li>
-            <li class="nav-item">
-              <a class="nav-link active text-white" href="{% url 'Issues' %}"
-                >Issues</a
-              >
-            </li>
+            {% endif %}
           </ul>
         </div>
       </div>

@@ -54,6 +54,9 @@ def add_item(request):
 
 def add_user(request):
     context = {}
+    if request.session["user_role"] != "Admin" and not None:
+        return render(request, "counterapp/dashboard.html", context)
+
     if request.method == "GET":
         return render(request, "counterapp/auth/signup.html", context)
 
@@ -63,6 +66,7 @@ def add_user(request):
         password = request.POST["password"]
         confirm_password = request.POST["confirm-password"]
         role = request.POST["role"]
+        # role = "Admin"
 
         if password != confirm_password:
             context["msg"] = "Passwords must match."
@@ -82,8 +86,63 @@ def add_user(request):
         return render(request, "counterapp/auth/users.html", context)
 
 
+def user_detail(request, user_id):
+    context = {}
+    if request.session["user_role"] != "Admin" and not None:
+        return render(request, "counterapp/dashboard.html", context)
+
+    try:
+        user = User.get_user_by_id(user_id)
+    except User.DoesNotExist:
+        context["msg"] = "Error getting  user"
+        return render(request, "counterapp/auth/users.html", context)
+
+    if request.method == "GET":
+        context["user"] = user
+        return render(request, "counterapp/auth/edit_user.html", context)
+
+    if request.method == "POST":
+        email = request.POST["email"]
+        username = request.POST["username"]
+        password = request.POST["password"]
+        confirm_password = request.POST["confirm-password"]
+        role = request.POST["role"]
+
+        if password != confirm_password:
+            context["msg"] = "Passwords must match."
+            return render(request, "counterapp/auth/edit_user.html", context)
+
+        try:
+            User.update_user(user, username, email, password, role)
+        except Exception as e:
+            context["msg"] = "Error updating user"
+            print(e)
+            return render(request, "counterapp/auth/edit_user.html", context)
+
+        context["users"] = User.get_all_users()
+        return render(request, "counterapp/auth/users.html", context)
+
+
+def delete_user(request, user_id):
+    context = {}
+    if request.method == "POST":
+        users = User.get_all_users()
+        context["users"] = users
+
+        try:
+            User.delete_user(user_id)
+        except:
+            context["msg"] = "failed to delete user"
+            return render(request, "counterapp/auth/users.html", context)
+
+        return render(request, "counterapp/auth/users.html", context)
+
+
 def users(request):
     context = {}
+    if request.session["user_role"] != "Admin" and not None:
+        return render(request, "counterapp/dashboard.html", context)
+
     if request.method == "GET":
         users = User.get_all_users()
         context["users"] = users
@@ -106,11 +165,19 @@ def login(request):
 
         if user and check_password(password, user.password):
             request.session["user_id"] = user.id
-            return redirect("dashboard/")
+            request.session["username"] = user.name
+            request.session["user_role"] = user.role
+            return render(request, "counterapp/dashboard.html", context)
 
         else:
             context["msg"] = "wrong password provided!"
             return render(request, "counterapp/auth/login.html", context)
+
+
+def logout(request):
+    if request.session:
+        request.session = {}
+        return render(request, "counterapp/auth/login.html")
 
 
 def add_reciept(request):
@@ -259,13 +326,11 @@ def dashboard(request):
     recp_value = 0
     for r in list(recs):
         recp_count += r["quantity"]
-        recp_value += r["quantity"] * int(r["value"])
 
     issues_count = 0
     issue_value = 0
     for i in list(issues):
         issues_count += i["quantity_issued"]
-        issue_value += i["quantity_issued"] * int(r["value"])
 
     context["issues_count"] = issues_count
     context["issues_value"] = issue_value

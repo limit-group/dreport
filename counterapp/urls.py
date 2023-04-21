@@ -16,11 +16,14 @@ from .views import (
     issues,
     issue_detail,
     add_item,
-    items
+    items,
+    logout,
+    user_detail,
+    delete_user
 )
 
 urlpatterns = [
-    path("", dashboard, name="Dashboard"),
+    path("dashboard/", dashboard, name="Dashboard"),
     path("add-reciept/", add_reciept, name="Add Reciept"),
     path("add-requistion/", add_requisition, name="Add Requisition"),
     path("add-issue/", add_issue, name="Add Issue"),
@@ -35,6 +38,9 @@ urlpatterns = [
     path("reports/", reports, name="Reports"),
     path("generate-pdf/", generate_pdf, name="Generate PDF"),
     path("login/", login, name="Login"),
+    path("logout/", logout, name="Logout"),
     path("users/", users, name="Users"),
     path("users/add-user/", add_user, name="Add User"),
+    path("users/edit-user/<int:user_id>/", user_detail, name="Edit User"),
+    path("users/delete-user/<int:user_id>/", delete_user, name="Delete User"),
 ]

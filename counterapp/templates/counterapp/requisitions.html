@@ -25,6 +25,7 @@
         <th scope="col">Unit(s)</th>
         <th scope="col">Qty Required</th>
         <th scope="col">Date.</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
@@ -35,6 +36,21 @@
         <td>{{ rec.items }}</td>
         <td>{{ rec.quantity_required }}</td>
         <td>{{ rec.created_at }}</td>
+        <td>
+          {% if rec.approved == False %}
+          <form action="" method="post">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle"></i> Approve
+            </button>
+          </form>
+          {% else %}
+          <form action="" method="post">
+            <button type="submit" class="btn btn-info">
+              <i class="bi bi-check-circle"></i> Disapprove
+            </button>
+          </form>
+          {% endif %}
+        </td>
       </tr>
       {% endfor %}
     </tbody>
@@ -49,7 +65,7 @@
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 <script>
-   $(document).ready(function () {
+  $(document).ready(function () {
     var table = $("#reqs").DataTable({
       dom: "Bfrtip",
       lengthChange: false,

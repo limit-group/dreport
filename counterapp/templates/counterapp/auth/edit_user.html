@@ -4,19 +4,21 @@
   <div class="row">
     <div class="col-md-4 offset-md-4">
       <form class="pt-3" action="" method="post">
+        
         {% csrf_token %} {% if msg %}
         <div class="alert alert-danger">
           <span class="title">{{ msg }} </span>
         </div>
         {% endif %}
-        <h1 class="h3 mb-3 fw-normal text-center">Create User</h1>
+        <h1 class="h3 mb-3 fw-normal text-center">Edit User</h1>
         <div class="form-floating">
           <input
             type="text"
             class="form-control"
             id="username"
             name="username"
-            placeholder="name@example.com"
+            value="{{ user.name }}"
+            placeholder="John Doe"
           />
           <label for="username">Username</label>
         </div>
@@ -27,6 +29,7 @@
             class="form-control"
             id="email"
             name="email"
+            value="{{ user.email }}"
             placeholder="name@example.com"
           />
           <label for="email">Email address</label>
@@ -38,6 +41,7 @@
             class="form-control"
             id="password"
             name="password"
+            value=""
             placeholder="Password"
           />
           <label for="password">Password</label>
@@ -49,6 +53,7 @@
             class="form-control"
             id="confirm-password"
             name="confirm-password"
+            value=""
             placeholder="Confirm Password"
           />
           <label for="confirm-password">Confirm Password</label>
@@ -56,6 +61,7 @@
         <br />
         <div class="form-floating">
           <select name="role" id="role" class="form-control">
+            <option value="{{ user.role }}">-select-</option>
             <option value="Admin">Admin</option>
             <option value="User">Store Keeper</option>
           </select>
@@ -63,7 +69,7 @@
         </div>
         <br />
         <button class="w-100 btn btn-lg btn-primary" type="submit">
-          Create User
+          Edit User
         </button>
         <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
       </form>
