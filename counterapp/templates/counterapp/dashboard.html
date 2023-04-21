@@ -1,5 +1,10 @@
 {% extends 'counterapp/base.html' %} {% block title %} Dashboard {% endblock %}
 {% block content %}
+<style>
+  a {
+    text-decoration: none !important;
+  }
+</style>
 <div class="container mt-2">
   <h2>Dashboard</h2>
   <div class="row">
@@ -17,7 +22,7 @@
                   Reciepts
                 </div>
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ issues_count }}
+                  {{ receipt_count }}
                 </div>
               </div>
               <div class="col-auto">
@@ -38,7 +43,7 @@
                   Requisitions
                 </div>
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ rec_count }}
+                  {{ requisition_count }}
                 </div>
               </div>
               <div class="col-auto">
@@ -63,7 +68,7 @@
                 <div class="row no-gutters align-items-center">
                   <div class="col-auto">
                     <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                      {{ issues_value }}
+                      {{ issue_count }}
                     </div>
                   </div>
                 </div>
@@ -87,7 +92,7 @@
                 </div>
 
                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  {{ rec_value }}
+                  {{ item_count }}
                 </div>
               </div>
               <div class="col-auto">

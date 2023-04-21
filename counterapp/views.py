@@ -25,6 +25,20 @@ from .models import (
 )
 
 
+def dashboard(request):
+    context = {}
+    issue_count = Issue.objects.count()
+    receipt_count = Receipt.objects.count()
+    requisition_count = Requisition.objects.count()
+    item_count = Item.objects.count()
+
+    context["issue_count"] = issue_count
+    context["receipt_count"] = receipt_count
+    context["requisition_count"] = requisition_count
+    context["item_count"] = item_count
+    return render(request, "counterapp/dashboard.html", context)
+
+
 def items(request):
     context = {}
     if request.method == "GET":
@@ -50,6 +64,17 @@ def add_item(request):
         items = Item.get_all_items()
         context["items"] = items
         return render(request, "counterapp/items.html", context)
+
+
+def users(request):
+    context = {}
+    if request.session["user_role"] != "Admin" and not None:
+        return render(request, "counterapp/dashboard.html", context)
+
+    if request.method == "GET":
+        users = User.get_all_users()
+        context["users"] = users
+        return render(request, "counterapp/auth/users.html", context)
 
 
 def add_user(request):
@@ -138,21 +163,11 @@ def delete_user(request, user_id):
         return render(request, "counterapp/auth/users.html", context)
 
 
-def users(request):
-    context = {}
-    if request.session["user_role"] != "Admin" and not None:
-        return render(request, "counterapp/dashboard.html", context)
-
-    if request.method == "GET":
-        users = User.get_all_users()
-        context["users"] = users
-        return render(request, "counterapp/auth/users.html", context)
-
-
 def login(request):
     context = {}
     if request.method == "GET":
-        return render(request, "counterapp/auth/login.html", context)
+        if request.session is not None:
+            return render(request, "counterapp/auth/login.html", context)
 
     if request.method == "POST":
         email = request.POST["email"]
@@ -176,8 +191,25 @@ def login(request):
 
 def logout(request):
     if request.session:
-        request.session = {}
-        return render(request, "counterapp/auth/login.html")
+        del request.session["user_id"]
+        del request.session["user_role"]
+        del request.session["username"]
+        return redirect("/login")
+
+
+def reciepts(request):
+    context = {}
+    receipts = ReceiptItem.get_receipt_items()
+    context["receipts"] = receipts
+
+    return render(request, "counterapp/receipts.html", context)
+
+
+def reciept_detail(request, voucher_no):
+    context = {}
+    receipts = Receipt.get_reciepts_by_voucher_no(voucher_no)
+    context["receipts"] = receipts
+    return render(request, "counterapp/receipts.html", context)
 
 
 def add_reciept(request):
@@ -211,6 +243,22 @@ def add_reciept(request):
         return render(request, "counterapp/receipts.html", context)
 
 
+def issues(request):
+    context = {}
+    issues = IssueItem.get_issue_items()
+    context["issues"] = issues
+
+    return render(request, "counterapp/issues.html", context)
+
+
+def issue_detail(request, voucher_no):
+    context = {}
+    issues = Issue.get_issues_by_voucher_no(voucher_no)
+    context["issues"] = issues
+
+    return render(request, "counterapp/issues.html", context)
+
+
 def add_issue(request):
     context = {}
     if request.method == "GET":
@@ -241,6 +289,22 @@ def add_issue(request):
         return render(request, "counterapp/issues.html", context)
 
 
+def requisitions(request):
+    context = {}
+    requisitions = RequisitionItem.get_requisition_items()
+    context["requisitions"] = requisitions
+
+    return render(request, "counterapp/requisitions.html", context)
+
+
+def requisition_detail(request, voucher_no):
+    context = {}
+    requisitions = Requisition.get_requisitions_by_voucher_no(voucher_no)
+    context["requisitions"] = requisitions
+
+    return render(request, "counterapp/requisitions.html", context)
+
+
 def add_requisition(request):
     context = {}
     if request.method == "GET":
@@ -269,74 +333,6 @@ def add_requisition(request):
         requisitions = RequisitionItem.get_requisition_items()
         context["requisitions"] = requisitions
         return render(request, "counterapp/requisitions.html", context)
-
-
-def reciepts(request):
-    context = {}
-    receipts = ReceiptItem.get_receipt_items()
-    context["receipts"] = receipts
-
-    return render(request, "counterapp/receipts.html", context)
-
-
-def reciept_detail(request, voucher_no):
-    context = {}
-    receipts = Receipt.get_reciepts_by_voucher_no(voucher_no)
-    context["receipts"] = receipts
-    return render(request, "counterapp/receipts.html", context)
-
-
-def requisitions(request):
-    context = {}
-    requisitions = RequisitionItem.get_requisition_items()
-    context["requisitions"] = requisitions
-
-    return render(request, "counterapp/requisitions.html", context)
-
-
-def issues(request):
-    context = {}
-    issues = IssueItem.get_issue_items()
-    context["issues"] = issues
-
-    return render(request, "counterapp/issues.html", context)
-
-
-def requisition_detail(request, voucher_no):
-    context = {}
-    requisitions = Requisition.get_requisitions_by_voucher_no(voucher_no)
-    context["requisitions"] = requisitions
-
-    return render(request, "counterapp/requisitions.html", context)
-
-
-def issue_detail(request, voucher_no):
-    context = {}
-    issues = Issue.get_issues_by_voucher_no(voucher_no)
-    context["issues"] = issues
-
-    return render(request, "counterapp/issues.html", context)
-
-
-def dashboard(request):
-    context = {}
-    issues = IssueItem.get_issue_items().values()
-    recs = ReceiptItem.get_receipt_items().values()
-    recp_count = 0
-    recp_value = 0
-    for r in list(recs):
-        recp_count += r["quantity"]
-
-    issues_count = 0
-    issue_value = 0
-    for i in list(issues):
-        issues_count += i["quantity_issued"]
-
-    context["issues_count"] = issues_count
-    context["issues_value"] = issue_value
-    context["rec_count"] = recp_count
-    context["rec_value"] = recp_value
-    return render(request, "counterapp/dashboard.html", context)
 
 
 def reports(request):
