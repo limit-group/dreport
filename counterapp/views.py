@@ -232,10 +232,11 @@ def delete_user(request, user_id):
 def login(request):
     context = {}
     if request.method == "GET":
-        if request.session is None:
-            return render(request, "counterapp/auth/login.html", context)
-        else:
-            return redirect("/dashboard")
+        if "user_id" in request.session:
+            return redirect("/dashboard/")
+            
+        return render(request, "counterapp/auth/login.html", context)
+        
 
     if request.method == "POST":
         email = request.POST["email"]
