@@ -28,7 +28,7 @@
         <th scope="col">Description</th>
         <th scope="col">Quantity</th>
         <th scope="col">Date.</th>
-        {% if request.session.role == "Admin" %}
+        {% if request.session.user_role == "Admin" %}
         <th scope="col">Action</th>
         {% endif %}
       </tr>
@@ -42,21 +42,13 @@
         <td>{{ rec.description }}</td>
         <td>{{ rec.quantity_required }}</td>
         <td>{{ rec.created_at }}</td>
-        {% if request.session.role == "Admin" %}
+        {% if request.session.user_role == "Admin" %}
         <td>
-          {% if rec.requisition.approved == False %}
           <form action="" method="post">
             <button type="submit" class="btn btn-success">
               <i class="bi bi-check-circle"></i> Approve
             </button>
           </form>
-          {% else %}
-          <form action="" method="post">
-            <button type="submit" class="btn btn-info">
-              <i class="bi bi-check-circle"></i> Disapprove
-            </button>
-          </form>
-          {% endif %}
         </td>
         {% endif %}
       </tr>

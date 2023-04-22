@@ -1,5 +1,7 @@
 import json
 import re
+from django.urls import reverse
+from functools import wraps
 from io import BytesIO
 from datetime import datetime
 from django.contrib.auth.hashers import make_password, check_password
@@ -26,6 +28,17 @@ from .models import (
 )
 
 
+def login_required(view_func):
+    @wraps(view_func)
+    def decorated_function(request, *args, **kwargs):
+        if "user_id" not in request.session:
+            return redirect("/login/")
+        return view_func(request, *args, **kwargs)
+
+    return decorated_function
+
+
+@login_required
 def dashboard(request):
     context = {}
     issue_count = Issue.objects.count()
@@ -42,6 +55,7 @@ def dashboard(request):
     return render(request, "counterapp/dashboard.html", context)
 
 
+@login_required
 def items(request):
     context = {}
     if request.method == "GET":
@@ -50,6 +64,7 @@ def items(request):
         return render(request, "counterapp/items.html", context)
 
 
+@login_required
 def add_item(request):
     context = {}
     if request.method == "GET":
@@ -69,6 +84,7 @@ def add_item(request):
         return render(request, "counterapp/items.html", context)
 
 
+@login_required
 def item_detail(request, item_id):
     context = {}
 
@@ -95,6 +111,7 @@ def item_detail(request, item_id):
         return render(request, "counterapp/items.html", context)
 
 
+@login_required
 def delete_item(request, item_id):
     context = {}
     if request.method == "POST":
@@ -109,6 +126,7 @@ def delete_item(request, item_id):
         return render(request, "counterapp/items.html", context)
 
 
+@login_required
 def users(request):
     context = {}
     if request.session["user_role"] != "Admin" and not None:
@@ -120,6 +138,7 @@ def users(request):
         return render(request, "counterapp/auth/users.html", context)
 
 
+@login_required
 def add_user(request):
     context = {}
     if request.session["user_role"] != "Admin" and request.session is not None:
@@ -150,10 +169,10 @@ def add_user(request):
             context["msg"] = "Error creating a new user"
             return render(request, "counterapp/auth/signup.html", context)
 
-        
         return redirect("/users/")
 
 
+@login_required
 def user_detail(request, user_id):
     context = {}
     if request.session["user_role"] != "Admin" and not None:
@@ -187,10 +206,10 @@ def user_detail(request, user_id):
             print(e)
             return render(request, "counterapp/auth/edit_user.html", context)
 
-        
         return redirect("/users/")
 
 
+@login_required
 def delete_user(request, user_id):
     context = {}
     if request.method == "POST":
@@ -233,13 +252,15 @@ def login(request):
 
 
 def logout(request):
-    if request.session:
-        del request.session["user_id"]
-        del request.session["user_role"]
-        del request.session["username"]
-        return redirect("/login")
+    if request.method == "POST":
+        if request.session:
+            del request.session["user_id"]
+            del request.session["user_role"]
+            del request.session["username"]
+            return redirect("/login")
 
 
+@login_required
 def reciepts(request):
     context = {}
     receipts = ReceiptItem.get_receipt_items()
@@ -248,6 +269,7 @@ def reciepts(request):
     return render(request, "counterapp/receipts.html", context)
 
 
+@login_required
 def reciept_detail(request, voucher_no):
     context = {}
     receipts = Receipt.get_reciepts_by_voucher_no(voucher_no)
@@ -255,6 +277,7 @@ def reciept_detail(request, voucher_no):
     return render(request, "counterapp/receipts.html", context)
 
 
+@login_required
 def add_reciept(request):
     context = {}
     if request.method == "GET":
@@ -299,10 +322,10 @@ def add_reciept(request):
             context["msg"] = "Error saving reciept!"
             return render(request, "counterapp/add_receipt.html", context)
 
-       
         return redirect("/receipts/")
 
 
+@login_required
 def issues(request):
     context = {}
     issues = IssueItem.get_issue_items()
@@ -311,6 +334,7 @@ def issues(request):
     return render(request, "counterapp/issues.html", context)
 
 
+@login_required
 def issue_detail(request, voucher_no):
     context = {}
     issues = Issue.get_issues_by_voucher_no(voucher_no)
@@ -319,6 +343,7 @@ def issue_detail(request, voucher_no):
     return render(request, "counterapp/issues.html", context)
 
 
+@login_required
 def add_issue(request):
     context = {}
     if request.method == "GET":
@@ -349,11 +374,12 @@ def add_issue(request):
                 )
                 issue_items.append(issue_item)
                 item = Item.get_item_by_id(item_id)
-                if item.count > 0:
-                    item.count -= entry["quantity_issued"]
+                if item.count > 0 and not int(entry["quantity_issued"]) > item.count:
+                    item.count -= int(entry["quantity_issued"])
                     item.save()
 
             IssueItem.objects.bulk_create(issue_items)
+
         except Exception as e:
             items = Item.get_all_items()
             context["items"] = items
@@ -363,6 +389,7 @@ def add_issue(request):
         return redirect("/issues/")
 
 
+@login_required
 def requisitions(request):
     context = {}
     requisitions = RequisitionItem.get_requisition_items()
@@ -371,6 +398,7 @@ def requisitions(request):
     return render(request, "counterapp/requisitions.html", context)
 
 
+@login_required
 def requisition_detail(request, voucher_no):
     context = {}
     requisitions = Requisition.get_requisitions_by_voucher_no(voucher_no)
@@ -379,6 +407,7 @@ def requisition_detail(request, voucher_no):
     return render(request, "counterapp/requisitions.html", context)
 
 
+@login_required
 def add_requisition(request):
     context = {}
     if request.method == "GET":
@@ -410,9 +439,9 @@ def add_requisition(request):
                     requisition=requisition,
                 )
                 requisition_items.append(req_item)
-                item = Item.get_item_by_id(item_id)
-                item.count += 1
-                item.save()
+                # item = Item.get_item_by_id(item_id)
+                # item.count += 1
+                # item.save()
 
             RequisitionItem.objects.bulk_create(requisition_items)
 
@@ -426,6 +455,7 @@ def add_requisition(request):
         return redirect("/requisitions/")
 
 
+@login_required
 def reports(request):
     context = {}
     months = [
@@ -454,6 +484,7 @@ def reports(request):
         return render(request, "counterapp/reports.html", context)
 
 
+@login_required
 def generate_pdf(request):
     res = HttpResponse(content_type="application/pdf")
     d = datetime.today().strftime("%Y-%m-%d")
