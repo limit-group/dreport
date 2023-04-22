@@ -150,8 +150,8 @@ def add_user(request):
             context["msg"] = "Error creating a new user"
             return render(request, "counterapp/auth/signup.html", context)
 
-        context["users"] = User.get_all_users()
-        return render(request, "counterapp/auth/users.html", context)
+        
+        return redirect("/users/")
 
 
 def user_detail(request, user_id):
@@ -187,8 +187,8 @@ def user_detail(request, user_id):
             print(e)
             return render(request, "counterapp/auth/edit_user.html", context)
 
-        context["users"] = User.get_all_users()
-        return render(request, "counterapp/auth/users.html", context)
+        
+        return redirect("/users/")
 
 
 def delete_user(request, user_id):
@@ -203,7 +203,7 @@ def delete_user(request, user_id):
             context["msg"] = "failed to delete user"
             return render(request, "counterapp/auth/users.html", context)
 
-        return render(request, "counterapp/auth/users.html", context)
+        return redirect("/users/")
 
 
 def login(request):
@@ -225,7 +225,7 @@ def login(request):
             request.session["user_id"] = user.id
             request.session["username"] = user.name
             request.session["user_role"] = user.role
-            return render(request, "counterapp/dashboard.html", context)
+            return redirect("/dashboard/")
 
         else:
             context["msg"] = "wrong password provided!"
@@ -299,9 +299,8 @@ def add_reciept(request):
             context["msg"] = "Error saving reciept!"
             return render(request, "counterapp/add_receipt.html", context)
 
-        receipts = ReceiptItem.objects.all()
-        context["receipts"] = receipts
-        return render(request, "counterapp/receipts.html", context)
+       
+        return redirect("/receipts/")
 
 
 def issues(request):
@@ -361,9 +360,7 @@ def add_issue(request):
             context["msg"] = "Error adding issue entry"
             return render(request, "counterapp/add_issue.html", context)
 
-        issues = IssueItem.get_issue_items()
-        context["issues"] = issues
-        return render(request, "counterapp/issues.html", context)
+        return redirect("/issues/")
 
 
 def requisitions(request):
@@ -426,9 +423,7 @@ def add_requisition(request):
             context["msg"] = "Error adding requisition entries"
             return render(request, "counterapp/add_requisition.html", context)
 
-        requisitions = RequisitionItem.get_requisition_items()
-        context["requisitions"] = requisitions
-        return render(request, "counterapp/requisitions.html", context)
+        return redirect("/requisitions/")
 
 
 def reports(request):

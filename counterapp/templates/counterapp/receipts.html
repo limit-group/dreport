@@ -20,16 +20,18 @@
     <table class="table table-bordered" style="width: 100%" id="receipts">
       <thead>
         <tr>
+          <th scope="col">Voucher No</th>
           <th scope="col">Code No.</th>
           <th scope="col">Item</th>
           <th scope="col">Description</th>
-          <th scope="col">Qty Recieved</th>
+          <th scope="col">Quantity</th>
           <th scope="col">Date.</th>
         </tr>
       </thead>
       <tbody>
         {% for rec in receipts %}
         <tr>
+          <td>{{ rec.receipt.voucher_no }}</td>
           <td>{{ rec.code_no }}</td>
           <td>{{ rec.item.name }}</td>
           <td>{{ rec.description }}</td>

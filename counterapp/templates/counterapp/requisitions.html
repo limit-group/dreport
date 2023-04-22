@@ -10,34 +10,41 @@
 
 <div class="container">
   <div class="pb-1">
-    <h2>Requisitions</h2>
     <div class="text-end">
       <a href="{% url 'Add Requisition' %}" class="btn btn-primary"
         >Add Requisition</a
       >
     </div>
   </div>
+  <h3>
+    <span class="badge rounded-pill bg-danger">pending</span> Requisitions
+  </h3>
   <table class="table table-bordered" id="reqs">
     <thead>
       <tr>
+        <th scope="col">Voucher No</th>
         <th scope="col">Code No.</th>
         <th scope="col">Item</th>
         <th scope="col">Description</th>
-        <th scope="col">Qty Required</th>
+        <th scope="col">Quantity</th>
         <th scope="col">Date.</th>
+        {% if request.session.role == "Admin" %}
         <th scope="col">Action</th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for rec in requisitions %}
+      {% for rec in requisitions %} {% if rec.requisition.approved == False %}
       <tr>
+        <td>{{ rec.requisition.voucher_no }}</td>
         <td>{{ rec.code_no }}</td>
         <td>{{ rec.item.name }}</td>
         <td>{{ rec.description }}</td>
         <td>{{ rec.quantity_required }}</td>
         <td>{{ rec.created_at }}</td>
+        {% if request.session.role == "Admin" %}
         <td>
-          {% if rec.approved == False %}
+          {% if rec.requisition.approved == False %}
           <form action="" method="post">
             <button type="submit" class="btn btn-success">
               <i class="bi bi-check-circle"></i> Approve
@@ -51,8 +58,57 @@
           </form>
           {% endif %}
         </td>
+        {% endif %}
       </tr>
-      {% endfor %}
+      {% endif %} {% endfor %}
+    </tbody>
+  </table>
+  <hr />
+  <h3>
+    <span class="badge rounded-pill bg-success">Approved</span> Requisitions
+  </h3>
+  <table class="table table-bordered" id="reqs2">
+    <thead>
+      <tr>
+        <th scope="col">Voucher No</th>
+        <th scope="col">Code No.</th>
+        <th scope="col">Item</th>
+        <th scope="col">Description</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Date.</th>
+        {% if request.session.role == "Admin" %}
+        <th scope="col">Action</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in requisitions %} {% if rec.requisition.approved == True %}
+      <tr>
+        <td>{{ rec.requisition.voucher_no }}</td>
+        <td>{{ rec.code_no }}</td>
+        <td>{{ rec.item.name }}</td>
+        <td>{{ rec.description }}</td>
+        <td>{{ rec.quantity_required }}</td>
+        <td>{{ rec.created_at }}</td>
+        {% if request.session.role == "Admin" %}
+        <td>
+          {% if rec.approved == True %}
+          <form action="" method="post">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle"></i> Approve
+            </button>
+          </form>
+          {% else %}
+          <form action="" method="post">
+            <button type="submit" class="btn btn-info">
+              <i class="bi bi-check-circle"></i> Disapprove
+            </button>
+          </form>
+          {% endif %}
+        </td>
+        {% endif %}
+      </tr>
+      {% endif %} {% endfor %}
     </tbody>
   </table>
 </div>
@@ -67,6 +123,13 @@
 <script>
   $(document).ready(function () {
     var table = $("#reqs").DataTable({
+      dom: "Bfrtip",
+      lengthChange: false,
+      buttons: ["excel", "pdf", "print"],
+    });
+  });
+  $(document).ready(function () {
+    var table = $("#reqs2").DataTable({
       dom: "Bfrtip",
       lengthChange: false,
       buttons: ["excel", "pdf", "print"],
