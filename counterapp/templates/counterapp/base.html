@@ -91,9 +91,18 @@
             </li>
 
             <li class="nav-item">
+              <a class="nav-link active text-white">
+                <i class="bi bi-person-circle"></i> {{request.session.username}}
+              </a>
+            </li>
+            <li class="nav-item">
               <form action="{% url 'Logout' %}" method="post">
                 {% csrf_token %}
-                <button class="btn btn-outline-light" href="{% url 'Logout' %}" type="submit">
+                <button
+                  class="btn btn-outline-light"
+                  href="{% url 'Logout' %}"
+                  type="submit"
+                >
                   Logout
                 </button>
               </form>

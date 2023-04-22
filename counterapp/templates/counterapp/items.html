@@ -12,7 +12,9 @@
         <th scope="col">Item Name.</th>
         <th scope="col">Count In Stock</th>
         <th scope="col">Created Date.</th>
-        <th>Action</th>
+        {% if request.session.user_role == "Admin" %}
+        <th scope="col">Action</th>
+        {% endif %}
       </tr>
     </thead>
     <tbody>
@@ -21,6 +23,7 @@
         <td>{{ rec.name }}</td>
         <td>{{ rec.count }}</td>
         <td>{{ rec.created_at }}</td>
+        {% if request.session.user_role == "Admin" %}
         <td>
           <div class="d-flex justify-content-around">
             <a href="{% url 'Edit Item' item_id=rec.id %}" class="btn btn-info"
@@ -34,6 +37,7 @@
             </form>
           </div>
         </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>

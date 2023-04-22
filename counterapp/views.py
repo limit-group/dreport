@@ -392,8 +392,25 @@ def add_issue(request):
 @login_required
 def requisitions(request):
     context = {}
-    requisitions = RequisitionItem.get_requisition_items()
+    req = Requisition.get_requisitions().filter(approved=False)
+    reqs = Requisition.get_requisitions().filter(approved=True)
+    # context["req"] = req
+    # context["reqs"] = reqs
+    requisitions = []
+    for r in req:
+        requisition_items = RequisitionItem.get_requisition_items().filter(
+            requisition=r
+        )
+        requisitions.append({"requisition": r, "requisition_items": requisition_items})
     context["requisitions"] = requisitions
+
+    requisitions_approved = []
+    for r in reqs:
+        requisition_items = RequisitionItem.get_requisition_items().filter(
+            requisition=r
+        )
+        requisitions_approved.append({"requisition": r, "requisition_items": requisition_items})
+    context["requisitions_approved"] = requisitions_approved
 
     return render(request, "counterapp/requisitions.html", context)
 
@@ -405,6 +422,21 @@ def requisition_detail(request, voucher_no):
     context["requisitions"] = requisitions
 
     return render(request, "counterapp/requisitions.html", context)
+
+
+@login_required
+def requisition_approval(request, req_id):
+    context = {}
+    if request.method == "POST":
+        try:
+            req = Requisition.get_requisition_by_id(req_id)
+            req.approved = True
+            req.save()
+        except:
+            context["msg"] = "Error, approving reqisition!"
+            return redirect("/requisitions/", context)
+
+        return redirect("/requisitions/")
 
 
 @login_required

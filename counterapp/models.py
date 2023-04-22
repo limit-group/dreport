@@ -63,6 +63,9 @@ class Requisition(models.Model):
     def get_requisitions():
         return Requisition.objects.all()
 
+    def get_requisition_by_id(id):
+        return Requisition.objects.filter(id=id).first()
+
     def get_requisitions_by_voucher_no(voucher_no):
         issue = Requisition.objects.filter(voucher_no=voucher_no).first()
         return issue.requisition_items.all()
