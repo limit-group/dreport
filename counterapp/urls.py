@@ -22,10 +22,12 @@ from .views import (
     delete_user,
     delete_item,
     item_detail,
-    requisition_approval
+    requisition_approval,
+    home,
 )
 
 urlpatterns = [
+    path("", home, name="Home"),
     path("dashboard/", dashboard, name="Dashboard"),
     path("add-reciept/", add_reciept, name="Add Reciept"),
     path("add-requistion/", add_requisition, name="Add Requisition"),
@@ -39,8 +41,14 @@ urlpatterns = [
     path("receipts/", reciepts, name="Reciepts"),
     path("receipts/<int:voucher_no>/", reciept_detail, name="Reciept Detail"),
     path("requisitions/", requisitions, name="Requisitions"),
-    path("requisitions/<int:voucher_no>/", requisition_detail, name="Requisition Detail"),
-    path("requisitions/<int:req_id>/approve/", requisition_approval, name="Approve Requisition"),
+    path(
+        "requisitions/<int:voucher_no>/", requisition_detail, name="Requisition Detail"
+    ),
+    path(
+        "requisitions/<int:req_id>/approve/",
+        requisition_approval,
+        name="Approve Requisition",
+    ),
     path("reports/", reports, name="Reports"),
     path("generate-pdf/", generate_pdf, name="Generate PDF"),
     path("login/", login, name="Login"),

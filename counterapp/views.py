@@ -28,6 +28,10 @@ from .models import (
 )
 
 
+def home(request):
+    if request.method == "GET":
+        return redirect("/dashboard/")
+
 def login_required(view_func):
     @wraps(view_func)
     def decorated_function(request, *args, **kwargs):
@@ -228,8 +232,10 @@ def delete_user(request, user_id):
 def login(request):
     context = {}
     if request.method == "GET":
-        if request.session is not None:
+        if request.session is None:
             return render(request, "counterapp/auth/login.html", context)
+        else:
+            return redirect("/dashboard")
 
     if request.method == "POST":
         email = request.POST["email"]
