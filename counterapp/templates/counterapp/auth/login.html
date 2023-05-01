@@ -35,48 +35,99 @@
     <style>
       body {
         font-family: "Lato", sans-serif !important;
+        /* text-shadow: 0 0.05rem 0.1rem rgba(0, 0, 0, 0.5); */
+      }
+      .cover-container {
+        max-width: 42em;
+      }
+
+      /*
+ * Header
+ */
+
+      .nav-masthead .nav-link {
+        color: #000;
+        border-bottom: 0.25rem solid transparent;
+      }
+
+      .nav-masthead .nav-link:hover,
+      .nav-masthead .nav-link:focus {
+        border-bottom-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .nav-masthead .nav-link + .nav-link {
+        margin-left: 1rem;
+      }
+
+      .nav-masthead .active {
+        color: #000;
+        border-bottom-color: #fff;
       }
     </style>
   </head>
-  <body>
-    <div class="container py-3">
-      <div class="row">
-        <div class="col-md-4 offset-md-4">
-          <form class="pt-3" action="" method="post">
-            {% csrf_token %} {% if msg %}
-            <div class="alert alert-danger">
-              <span class="title">{{ msg }} </span>
-            </div>
+  <body class="d-flex h-100 text-center text-bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="mb-auto">
+        <div>
+          <h3 class="float-md-start mb-0">dReport</h3>
+          <nav class="nav nav-masthead justify-content-center float-md-end">
+            <a
+              class="nav-link fw-bold py-1 px-0 active"
+              aria-current="page"
+              href="/"
+              >Home</a
+            >
+            <a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
+            <a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+            {% if request.session.user_id %}
+            <a class="nav-link fw-bold py-1 px-0" href="/dashboard"
+              >Dashboard</a
+            >
+            {% else %}
+            <a class="nav-link fw-bold py-1 px-0" href="/login">Login</a>
             {% endif %}
-            <h1 class="h3 mb-3 fw-normal text-center">SignIn to Continue</h1>
+          </nav>
+        </div>
+      </header>
+      <div class="container py-3">
+        <div class="row">
+          <div class="col">
+            <form class="pt-3" action="" method="post">
+              {% csrf_token %} {% if msg %}
+              <div class="alert alert-danger">
+                <span class="title">{{ msg }} </span>
+              </div>
+              {% endif %}
+              <h1 class="h3 mb-3 fw-normal text-center">SignIn to Continue</h1>
 
-            <div class="form-floating">
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                name="email"
-                placeholder="name@example.com"
-              />
-              <label for="email">Email address</label>
-            </div>
-            <br />
-            <div class="form-floating">
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                name="password"
-                placeholder="Password"
-              />
-              <label for="password">Password</label>
-            </div>
-            <br />
-            <button class="w-100 btn btn-lg btn-primary" type="submit">
-              Sign in
-            </button>
-            <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
-          </form>
+              <div class="form-floating">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                />
+                <label for="email">Email address</label>
+              </div>
+              <br />
+              <div class="form-floating">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  placeholder="Password"
+                />
+                <label for="password">Password</label>
+              </div>
+              <br />
+              <button class="w-100 btn btn-lg btn-dark" type="submit">
+                Sign in
+              </button>
+              <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
+            </form>
+          </div>
         </div>
       </div>
     </div>

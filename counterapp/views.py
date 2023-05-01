@@ -30,7 +30,7 @@ from .models import (
 
 def home(request):
     if request.method == "GET":
-        return redirect("/dashboard/")
+        return render(request, "counterapp/home.html")
 
 def login_required(view_func):
     @wraps(view_func)
