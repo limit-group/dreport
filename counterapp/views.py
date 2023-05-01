@@ -56,6 +56,10 @@ def dashboard(request):
     context["requisition_count"] = requisition_count
     context["item_count"] = item_count
     context["user_count"] = user_count
+    context["issues"] = serializers.serialize("json", IssueItem.objects.all())
+    context["receipts"] = serializers.serialize("json", ReceiptItem.objects.all())
+    context["items"] = serializers.serialize("json", Item.objects.all())
+
     return render(request, "counterapp/dashboard.html", context)
 
 

@@ -9,7 +9,6 @@
   {%if request.session %}
   <h2>Dashboard</h2>
   <div class="row">
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <a
         href="{% url 'Reciepts' %}"
@@ -55,8 +54,6 @@
         </div>
       </a>
     </div>
-
-    <!-- Earnings (Monthly) Card Example -->
     <div class="col-xl-3 col-md-6 mb-4">
       <a href="{% url 'Issues' %}">
         <div class="card border-left-info shadow h-100 py-2">
@@ -133,22 +130,73 @@
 
   {% else %}
 
-  <p>Login Here </p>
+  <p>Login Here</p>
 
   {% endif %}
+  <div class="row">
+    <div class="col-md-8">
+      <div>
+        <canvas id="myChart"></canvas>
+      </div>
+    </div>
+    <!-- <div class="col-md-6">
+      <div>
+        <canvas id="myChart1"></canvas>
+      </div>
+    </div> -->
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   const ctx = document.getElementById("myChart");
+  // const receipts = JSON.parse('{{ receipts|safe }}')
+  var items = JSON.parse('{{ items|safe}}')
+  var data = []
+  items.forEach(element => {
+    data.push(element.fields)
+  });
 
+  console.log(data);
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+      labels: data.map(d => d.name),
       datasets: [
         {
-          label: "# of Votes",
-          data: [12, 19, 3, 5, 2, 3],
+          label: "# of Items in stock",
+          data: data.map(d => d.count ),
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+
+  const ctx1 = document.getElementById("myChart1");
+
+  const issues = JSON.parse('{{ issues|safe }}')
+  var data = []
+  issues.forEach(element => {
+    data.push(element.fields)
+  });
+ 
+  console.log(data);
+  new Chart(ctx1, {
+    type: "bar",
+    data: {
+      labels: data.map(d => d.description),
+      datasets: [
+        {
+          label: "Issues",
+          data: data.map(d => d.quantity_issued),
           borderWidth: 1,
         },
       ],
@@ -162,4 +210,5 @@
     },
   });
 </script>
+
 {%endblock%}

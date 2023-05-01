@@ -12,7 +12,7 @@
   <div class="pb-1">
     <h2>Issues</h2>
     <div class="text-end">
-      <a href="{% url 'Add Issue' %}" class="btn btn-primary"
+      <a href="{% url 'Add Issue' %}" class="btn btn-dark"
         >Add Issue</a
       >
     </div>
@@ -49,11 +49,24 @@
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 <script>
-   $(document).ready(function () {
+  $(document).ready(function () {
+    let name = function () {
+      var d = new Date();
+      var n = d.getTime();
+      return "issues" + "-" + n;
+    };
     var table = $("#reqs").DataTable({
       dom: "Bfrtip",
       lengthChange: false,
-      buttons: ["excel", "pdf", "print"],
+      buttons: [
+        { extend: "excel", className: "btn-dark", filename: name },
+        { extend: "pdf", className: "btn-dark", filename: name },
+        {
+          extend: "print",
+          className: "btn-dark",
+          filename: name,
+        },
+      ],
     });
   });
 </script>

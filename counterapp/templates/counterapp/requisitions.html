@@ -9,20 +9,23 @@
 />
 
 <div class="container">
+  <h2>Requisitions</h2>
   <div class="pb-1">
     <div class="text-end">
-      <a href="{% url 'Add Requisition' %}" class="btn btn-primary"
+      <a href="{% url 'Add Requisition' %}" class="btn btn-dark"
         >Add Requisition</a
       >
     </div>
   </div>
-  <h3>
-    <span class="badge rounded-pill bg-danger">pending</span> Requisitions
-  </h3>
-  {% for req in requisitions %}
-  {% if request.session.user_role == "Admin" %}
+  <h5>
+    <span class="badge rounded-pill bg-danger">pending</span>
+  </h5>
+  {% for req in requisitions %} {% if request.session.user_role == "Admin" %}
   <div class="text-end pb-1">
-    <form action="{% url 'Approve Requisition' req_id=req.requisition.id %}" method="post">
+    <form
+      action="{% url 'Approve Requisition' req_id=req.requisition.id %}"
+      method="post"
+    >
       {% csrf_token %}
       <button type="submit" class="btn btn-success">
         <i class="bi bi-check-circle"></i> Approve
@@ -42,7 +45,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for ri in req.requisition_items.all %} 
+      {% for ri in req.requisition_items.all %}
       <tr>
         <td>{{ ri.requisition.voucher_no }}</td>
         <td>{{ ri.code_no }}</td>
@@ -51,14 +54,14 @@
         <td>{{ ri.quantity_required }}</td>
         <td>{{ ri.created_at }}</td>
       </tr>
-       {% endfor %}
+      {% endfor %}
     </tbody>
   </table>
   {% endfor %}
   <hr />
-  <h3>
-    <span class="badge rounded-pill bg-success">Approved</span> Requisitions
-  </h3>
+  <h5>
+    <span class="badge rounded-pill bg-success">Approved</span>
+  </h5>
   {% for req in requisitions_approved %}
   <table class="table table-bordered" id="reqsy">
     <thead>
@@ -72,7 +75,7 @@
       </tr>
     </thead>
     <tbody>
-      {% for ri in req.requisition_items.all %} 
+      {% for ri in req.requisition_items.all %}
       <tr>
         <td>{{ ri.requisition.voucher_no }}</td>
         <td>{{ ri.code_no }}</td>
@@ -106,7 +109,7 @@
     var table = $("#reqs2").DataTable({
       dom: "Bfrtip",
       lengthChange: false,
-      buttons: ["excel", "pdf", "print"],
+      buttons: ["excel", "pdf", { extend: "print", className: "btn-dark" }],
     });
   });
 </script>

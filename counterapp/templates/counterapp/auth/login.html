@@ -1,44 +1,84 @@
-{% extends 'counterapp/base.html' %} {% block title %} Login {% endblock %}
-{%block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-4 offset-md-4">
-      <form class="pt-3" action="" method="post">
-        {% csrf_token %} {% if msg %}
-        <div class="alert alert-danger">
-          <span class="title">{{ msg }} </span>
-        </div>
-        {% endif %}
-        <h1 class="h3 mb-3 fw-normal text-center">Please sign in</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      href="https://cdn.datatables.net/v/bs5/dt-1.13.4/b-2.3.6/datatables.min.css"
+      rel="stylesheet"
+    />
 
-        <div class="form-floating">
-          <input
-            type="email"
-            class="form-control"
-            id="email"
-            name="email"
-            placeholder="name@example.com"
-          />
-          <label for="email">Email address</label>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css"
+    />
+    <style>
+      body {
+        font-family: "Lato", sans-serif !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-3">
+      <div class="row">
+        <div class="col-md-4 offset-md-4">
+          <form class="pt-3" action="" method="post">
+            {% csrf_token %} {% if msg %}
+            <div class="alert alert-danger">
+              <span class="title">{{ msg }} </span>
+            </div>
+            {% endif %}
+            <h1 class="h3 mb-3 fw-normal text-center">SignIn to Continue</h1>
+
+            <div class="form-floating">
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="name@example.com"
+              />
+              <label for="email">Email address</label>
+            </div>
+            <br />
+            <div class="form-floating">
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                placeholder="Password"
+              />
+              <label for="password">Password</label>
+            </div>
+            <br />
+            <button class="w-100 btn btn-lg btn-primary" type="submit">
+              Sign in
+            </button>
+            <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
+          </form>
         </div>
-        <br />
-        <div class="form-floating">
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            placeholder="Password"
-          />
-          <label for="password">Password</label>
-        </div>
-        <br />
-        <button class="w-100 btn btn-lg btn-primary" type="submit">
-          Sign in
-        </button>
-        <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
-{%endblock%}
+  </body>
+</html>

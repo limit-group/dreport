@@ -8,12 +8,24 @@
   rel="stylesheet"
   href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css"
 />
+<style>
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: none;
+    color: black !important;
+    border-radius: 4px;
+    border: 1px solid #828282;
+  }
 
+  .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+    background: none;
+    color: black !important;
+  }
+</style>
 <div class="container">
   <div class="pb-1">
     <h2>Reciepts</h2>
     <div class="text-end">
-      <a href="{% url 'Add Reciept' %}" class="btn btn-primary">Add Reciept</a>
+      <a href="{% url 'Add Reciept' %}" class="btn btn-dark">Add Reciept</a>
     </div>
   </div>
   <div class="table-responsive">
@@ -55,10 +67,23 @@
 
 <script>
   $(document).ready(function () {
+    let name = function () {
+      var d = new Date();
+      var n = d.getTime();
+      return "receipts" + "-" + n;
+    };
     var table = $("#receipts").DataTable({
       dom: "Bfrtip",
       lengthChange: false,
-      buttons: ["excel", "pdf", "print"],
+      buttons: [
+        { extend: "excel", className: "btn-dark", filename: name },
+        { extend: "pdf", className: "btn-dark", filename: name },
+        {
+          extend: "print",
+          className: "btn-dark",
+          filename: name,
+        },
+      ],
     });
   });
 </script>

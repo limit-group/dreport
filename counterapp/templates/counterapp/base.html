@@ -65,60 +65,164 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg bg-primary">
-      <div class="container-fluid">
-        <a class="navbar-brand text-white" href="{% url 'Dashboard' %}"
-          >Public Works</a
-        >
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <i class="bi bi-list text-white"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            {% if request.session.user_id %}
-            <li class="nav-item">
-              <a class="nav-link active text-white" href="{% url 'Dashboard' %}"
-                >Dashboard</a
-              >
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link active text-white">
-                <i class="bi bi-person-circle"></i> {{request.session.username}}
-              </a>
-            </li>
-            <li class="nav-item">
-              <form action="{% url 'Logout' %}" method="post">
-                {% csrf_token %}
-                <button
-                  class="btn btn-outline-light"
-                  href="{% url 'Logout' %}"
-                  type="submit"
+    <div class="container-fluid">
+      <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+          <div
+            class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
+          >
+            <a
+              href="/"
+              class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+            >
+              <span class="fs-5 d-none d-sm-inline">Store Management</span>
+            </a>
+            <ul
+              class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
+              id="menu"
+            >
+              <li class="nav-item">
+                <a href="/" class="nav-link align-middle px-0">
+                  <i class="fs-4 bi-house"></i>
+                  <span class="ms-1 d-none d-sm-inline">Home</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'Dashboard' %}"
+                  class="nav-link px-0 align-middle"
                 >
-                  Logout
-                </button>
-              </form>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="btn btn-outline-light" href="{% url 'Login' %}"
-                >Login</a
+                  <i class="fs-4 bi-speedometer2"></i>
+                  <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="{% url 'Reciepts' %}"
+                  class="nav-link px-0 align-middle"
+                >
+                  <i class="fs-4 bi-arrow-bar-down"></i>
+                  <span class="ms-1 d-none d-sm-inline">Receipts</span></a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'Requisitions' %}"
+                  class="nav-link px-0 align-middle"
+                >
+                  <i class="fs-4 bi-bucket"></i>
+                  <span class="ms-1 d-none d-sm-inline">Requisitions</span></a
+                >
+                <ul
+                  class="collapse nav flex-column ms-1"
+                  id="submenu2"
+                  data-bs-parent="#menu"
+                >
+                  <li class="w-100">
+                    <a href="#" class="nav-link px-0">
+                      <span class="d-none d-sm-inline">Item</span> 1</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="{% url 'Issues' %}"
+                  class="nav-link px-0 align-middle"
+                >
+                  <i class="fs-4 bi-arrow-bar-up"></i>
+                  <span class="ms-1 d-none d-sm-inline">Issues</span></a
+                >
+                <ul
+                  class="collapse nav flex-column ms-1"
+                  id="submenu2"
+                  data-bs-parent="#menu"
+                >
+                  <li class="w-100">
+                    <a href="#" class="nav-link px-0">
+                      <span class="d-none d-sm-inline">Item</span> 1</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  href="{% url 'Items' %}"
+                  class="nav-link px-0 align-middle"
+                >
+                  <i class="fs-4 bi-grid"></i>
+                  <span class="ms-1 d-none d-sm-inline">Items</span>
+                </a>
+                <ul
+                  class="collapse nav flex-column ms-1"
+                  id="submenu3"
+                  data-bs-parent="#menu"
+                >
+                  <li class="w-100">
+                    <a href="#" class="nav-link px-0">
+                      <span class="d-none d-sm-inline">Product</span> 1</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              {% if request.session.user_role == "Admin" %}
+              <li>
+                <a href="{% url 'Users' %}" class="nav-link px-0 align-middle">
+                  <i class="fs-4 bi-people"></i>
+                  <span class="ms-1 d-none d-sm-inline">Users</span>
+                </a>
+              </li>
+              {% endif %}
+            </ul>
+            <hr />
+            <div class="dropdown pb-4">
+              <a
+                href="#"
+                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                id="dropdownUser1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
-            </li>
-            {% endif %}
-          </ul>
+                <img
+                  src="https://github.com/mdo.png"
+                  alt="hugenerd"
+                  width="30"
+                  height="30"
+                  class="rounded-circle"
+                />
+                <span class="d-none d-sm-inline mx-1"
+                  >{{request.session.username}}</span
+                >
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="">Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li>
+                  <form
+                    action="{% url 'Logout' %}"
+                    method="post"
+                    class="dropdown-item"
+                  >
+                    {% csrf_token %}
+                    <button
+                      class="btn btn-outline-light"
+                      href="{% url 'Logout' %}"
+                      type="submit"
+                    >
+                      Logout
+                    </button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
+        <div class="col py-3">{% block content %} {% endblock %}</div>
       </div>
-    </nav>
-    <div class="p-2">{% block content %} {% endblock %}</div>
+    </div>
   </body>
 
   <script
